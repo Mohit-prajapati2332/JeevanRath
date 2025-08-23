@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EmergTrack - Ambulance Booking System</title>
+    <style>
+        :root {
+            --primary: #e74c3c;
+            --secondary: #3498db;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --warning: #f39c12;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .app-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .app-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .app-header p {
+            font-size: 1.1rem;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+
+        .booking-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .booking-form {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--dark);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+        }
+
+        .location-input {
+            position: relative;
+        }
+
+        .location-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 0 0 8px 8px;
+            z-index: 100;
+            display: none;
+        }
+
+        .location-suggestions.active {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .emergency-level {
+            margin-bottom: 20px;
+        }
+
+        .level-title {
+            margin-bottom: 10px;
+        }
+
+        .level-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .level-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .level-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .level-btn.low {
+            background-color: #f1c40f;
+            color: white;
+        }
+
+        .level-btn.medium {
+            background-color: #e67e22;
+            color: white;
+        }
+
+        .level-btn.high {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .level-btn.active {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        /* .map-container {
+            height: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background-color: #f8f9fa;
+            position: relative;
+        } */
+
+        /* .map-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        } */
+
+        /* .map-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        } */
+
+        .booking-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .booking-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        .status-tracker {
+            background-color: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            display: none;
+        }
+
+        .status-tracker.active {
+            display: block;
+        }
+
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .tracker-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+        }
+
+        .tracker-id {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        .tracker-steps {
+            margin-top: 30px;
+        }
+
+        .step {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            z-index: 2;
+            flex-shrink: 0;
+        }
+
+        .step.active .step-icon {
+            background-color: var(--secondary);
+            color: white;
+        }
+
+        .step.completed .step-icon {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+            padding-top: 3px;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .step-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 40px;
+            width: 2px;
+            height: calc(100% - 20px);
+            background-color: #ddd;
+            z-index: 1;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step.active::after, .step.completed::after {
+            background-color: var(--success);
+        }
+
+        .timer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .timer-icon {
+            margin-right: 10px;
+        }
+
+        .vehicle-details {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: #f5f7fa;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .vehicle-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+
+        .vehicle-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .vehicle-info {
+            flex: 1;
+        }
+
+        .vehicle-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .vehicle-number {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .driver-contact {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .contact-btn {
+            padding: 8px 15px;
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .contact-btn:hover {
+            background-color: #2980b9;
+        }
+
+        @media (max-width: 900px) {
+            .booking-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form action="ABA1.html">
+    <header>
+        <div class="container header-container">
+            <div class="logo">
+                <div class="logo-icon">🚑</div>
+                <span>EmergTrack</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="app-header">
+            <h1>Emergency Ambulance Booking</h1>
+            <p>Fastest response time in your area - Available 24/7</p>
+        </div>
+
+        <div class="booking-container">
+            <div class="booking-form">
+                <h2 class="form-title">Book Ambulance</h2>
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="patientName">Patient Name</label>
+                        <input type="text" id="patientName" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="patientAge">Patient Age</label>
+                        <input type="number" id="patientAge" class="form-control" required min="1">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contactNumber">Contact Number</label>
+                        <input type="tel" id="contactNumber" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emergencyType">Emergency Type</label>
+                        <select id="emergencyType" class="form-control" required>
+                            <option value="">Select emergency type</option>
+                            <option value="heart">Heart Attack/Stroke</option>
+                            <option value="accident">Accident/Trauma</option>
+                            <option value="respiratory">Respiratory Emergency</option>
+                            <option value="pediatric">Pediatric Emergency</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="location">Pickup Location</label>
+                        <div class="location-input">
+                            <input type="text" id="location" class="form-control" placeholder="Enter your address or drop a pin on the map" required>
+                            <div class="location-suggestions" id="locationSuggestions">
+                                <!-- Suggestions will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="emergency-level">
+                        <div class="level-title">Emergency Level</div>
+                        <div class="level-buttons">
+                            <button type="button" class="level-btn low" data-level="low">Low Urgency</button>
+                            <button type="button" class="level-btn medium" data-level="medium">Medium Urgency</button>
+                            <button type="button" class="level-btn high active" data-level="high">High Urgency</button>
+                        </div>
+                        <input type="hidden" id="emergencyLevel" value="high">
+                    </div>
+
+                    <button type="submit" class="booking-btn">Request Ambulance Now</button>
+                </form>
+                
+            </div>
+</form>
+            <!-- <div class="map-container">
+                <div class="map-placeholder">
+                      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/29bf6d18-8d6f-4eba-9703-c8ca9f9c200e.png" alt="Interactive map showing your location and nearby hospitals with ambulance availability" /> 
+                </div> 
+            </div> -->
+        </div>
+
+        <div class="status-tracker" id="statusTracker">
+            <div class="tracker-header">
+                <h3 class="tracker-title">Your Emergency Request</h3>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Location input autocomplete simulation
+            const locationInput = document.getElementById('location');
+            const suggestionsContainer = document.getElementById('locationSuggestions');
+
+            locationInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                
+                if (query.length > 2) {
+                    // Simulate API call
+                    setTimeout(() => {
+                        suggestionsContainer.innerHTML = '';
+                        
+                        // Simulated results
+                        const locations = [
+                            ${query} General Hospital,
+                            ${query} Medical Center,
+                            Emergency Clinic, ${query},
+                            ${query} Central,
+                            ${query} Downtown
+                        ];
+                        
+                        locations.forEach(location => {
+                            const suggestion = document.createElement('div');
+                            suggestion.className = 'suggestion-item';
+                            suggestion.textContent = location;
+                            suggestion.addEventListener('click', function() {
+                                locationInput.value = location;
+                                suggestionsContainer.classList.remove('active');
+                            });
+                            suggestionsContainer.appendChild(suggestion);
+                        });
+                        
+                        suggestionsContainer.classList.add('active');
+                    }, 300);
+                } else {
+                    suggestionsContainer.classList.remove('active');
+                }
+            });
+
+            // Click outside to close suggestions
+            document.addEventListener('click', function(e) {
+                if (!locationInput.contains(e.target)) {
+                    suggestionsContainer.classList.remove('active');
+                }
+            });
+
+            // Emergency level selection
+            const levelButtons = document.querySelectorAll('.level-btn');
+            const emergencyLevelInput = document.getElementById('emergencyLevel');
+            
+            levelButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    levelButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    emergencyLevelInput.value = this.dataset.level;
+                });
+            });
+
+            // Form submission
+            const bookingForm = document.getElementById('bookingForm');
+            const statusTracker = document.getElementById('statusTracker');
+            
+            bookingForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Here you would typically send data to server
+                console.log('Form submitted');
+                
+                // Show tracking UI
+                bookingForm.style.display = 'none';
+                statusTracker.classList.add('active');
+                
+                // Animate the timer
+                animateTimer();
+                
+                // Simulate status updates
+                simulateStatusUpdates();
+            });
+            
+            function animateTimer() {
+                let minutes = 8;
+                const timerElement = document.getElementById('timerValue');
+                
+                const interval = setInterval(() => {
+                    minutes--;
+                    timerElement.textContent = minutes;
+                    
+                    if (minutes === 0) {
+                        clearInterval(interval);
+                        timerElement.textContent = 'Arrived';
+                    }
+                }, 60000);
+            }
+            
+            function simulateStatusUpdates() {
+                setTimeout(() => {
+                    // Update to ambulance en route
+                    document.querySelectorAll('.step')[1].classList.remove('active');
+                    document.querySelectorAll('.step')[1].classList.add('completed');
+                    document.querySelectorAll('.step')[2].classList.add('active');
+                    
+                    // Update timer
+                    document.getElementById('timerValue').textContent = '5';
+                }, 90000);
+                
+                setTimeout(() => {
+                    // Update to hospital transfer
+                    document.querySelectorAll('.step')[2].classList.remove('active');
+                    document.querySelectorAll('.step')[2].classList.add('completed');
+                    document.querySelectorAll('.step')[3].classList.add('active');
+                    
+                    // Update timer
+                    document.getElementById('timerValue').textContent = 'Arrived at scene';
+                }, 240000);
+            }
+        });
+    </script>
+</body>
+</html>

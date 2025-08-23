@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Star Rating Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .rating-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 320px;
+    }
+
+    .rating-box h2 {
+      margin-bottom: 20px;
+    }
+
+    .stars {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .star {
+      font-size: 2rem;
+      color: #ccc;
+      transition: color 0.3s ease;
+    }
+
+    .star.hover,
+    .star.selected {
+      color: #f39c12;
+    }
+
+    #rating-value {
+      margin-top: 15px;
+      font-size: 18px;
+      color: #333;
+    }
+
+    #submit-msg {
+      margin-top: 10px;
+      font-size: 16px;
+      color: green;
+      font-weight: bold;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+
+    #submit-msg.show {
+      display: block;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="rating-box">
+    <h2>Rate Your Experience</h2>
+    <div class="stars">
+      <span class="star" data-value="1">&#9733;</span>
+      <span class="star" data-value="2">&#9733;</span>
+      <span class="star" data-value="3">&#9733;</span>
+      <span class="star" data-value="4">&#9733;</span>
+      <span class="star" data-value="5">&#9733;</span>
+    </div>
+    <div id="rating-value">No rating yet</div>
+    <div id="submit-msg">✔️ Rating submitted!</div>
+  </div>
+
+  <script>
+    const stars = document.querySelectorAll(".star");
+    const ratingValue = document.getElementById("rating-value");
+    const submitMsg = document.getElementById("submit-msg");
+
+    let currentRating = 0;
+
+    stars.forEach((star, index) => {
+      star.addEventListener("mouseover", () => {
+        highlightStars(index);
+      });
+
+      star.addEventListener("mouseout", () => {
+        highlightStars(currentRating - 1);
+      });
+
+      star.addEventListener("click", () => {
+        currentRating = index + 1;
+        ratingValue.textContent = `You rated: ${currentRating} star${currentRating > 1 ? "s" : ""}`;
+        highlightStars(currentRating - 1);
+
+        // Show submission message
+        submitMsg.classList.add("show");
+
+        // Optional: hide message after 3 seconds
+        setTimeout(() => {
+          submitMsg.classList.remove("show");
+        }, 3000);
+      });
+    });
+
+    function highlightStars(index) {
+      stars.forEach((star, i) => {
+        star.classList.toggle("hover", i <= index);
+        star.classList.toggle("selected", i <= index);
+      });
+    }
+  </script>
+
+</body>
+</html>

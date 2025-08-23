@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ambulance Tracking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .map-container {
+      height: 300px;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    .status-tracker {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 10px;
+    }
+
+    .tracker-title {
+      font-size: 22px;
+      color: #333;
+    }
+
+    .tracker-id {
+      color: #666;
+      font-size: 14px;
+    }
+
+    .timer {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      font-size: 16px;
+    }
+
+    .timer-icon {
+      margin-right: 8px;
+      color: #e74c3c;
+    }
+
+    .tracker-steps .step {
+      display: flex;
+      margin: 15px 0;
+    }
+
+    .step-icon {
+      font-size: 20px;
+      margin-right: 10px;
+      min-width: 25px;
+    }
+
+    .step-content {
+      flex-direction: column;
+    }
+
+    .step-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .step-description {
+      font-size: 14px;
+      color: #666;
+    }
+
+    .completed .step-icon {
+      color: green;
+    }
+
+    .active .step-icon {
+      color: orange;
+    }
+
+    .vehicle-details {
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 20px;
+      gap: 20px;
+    }
+
+    .vehicle-image img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .vehicle-image {
+      flex: 1 1 250px;
+    }
+
+    .vehicle-info {
+      flex: 2 1 250px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .vehicle-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .vehicle-number {
+      font-size: 16px;
+      margin-top: 5px;
+    }
+
+    .driver-contact {
+      margin-top: 10px;
+    }
+
+    .contact-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .tracker-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .vehicle-details {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="map-container">
+                <div class="map-placeholder">
+                      <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/29bf6d18-8d6f-4eba-9703-c8ca9f9c200e.png" alt="Interactive map showing your location and nearby hospitals with ambulance availability" /> 
+                </div> 
+            </div>
+
+  <div class="status-tracker">
+    <div class="tracker-header">
+      <div class="tracker-title">Your Emergency Request</div>
+      <div class="tracker-id">ID: <span>EMG-845612</span></div>
+    </div>
+
+    <div class="timer">
+      <span class="timer-icon">⏱</span>
+      <span>Estimated arrival: <span id="timer">8:00</span> minutes</span>
+    </div>
+
+    <div class="tracker-steps">
+      <div class="step" id="step1">
+        <div class="step-icon">Submitted:✓</div>
+        <div class="step-content">
+          <div class="step-title">Request Submitted</div>
+          <div class="step-description">Your emergency request has been received</div>
+        </div>
+      </div>
+      <div class="step" id="step2">
+        <div class="step-icon">Dispatched:!</div>
+        <div class="step-content">
+          <div class="step-title">Dispatching Ambulance</div>
+          <div class="step-description">We're assigning the nearest available ambulance</div>
+        </div>
+      </div>
+      <div class="step" id="step3">
+        <div class="step-icon">En Route:🚑</div>
+        <div class="step-content">
+          <div class="step-title">Ambulance En Route</div>
+          <div class="step-description">Your ambulance is on the way</div>
+        </div>
+      </div>
+      <div class="step" id="step4">
+        <div class="step-icon">🏥</div>
+        <div class="step-content">
+          <div class="step-title">Hospital Transfer</div>
+          <div class="step-description">Transporting to nearest appropriate facility</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="vehicle-details">
+      <div class="vehicle-image">
+        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/1eceb6d1-bacd-497b-a766-d5112a19d65e.png" alt="Ambulance" />
+      </div>
+      <div class="vehicle-info">
+        <div class="vehicle-title">Mobile ICU Ambulance</div>
+        <div class="vehicle-number">AMB-9824</div>
+        <div class="driver-contact">
+          <button class="contact-btn">Contact Driver</button>
+          <span>Driver: Rajesh K.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Maps API -->
+  <script>
+    let ambulanceMarker, map;
+
+    function initMap() {
+      const startPos = { lat: 28.6139, lng: 77.2090 }; // New Delhi
+
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: startPos,
+        zoom: 14,
+      });
+
+      ambulanceMarker = new google.maps.Marker({
+        position: startPos,
+        map,
+        title: "Ambulance",
+        icon: "https://maps.google.com/mapfiles/kml/shapes/ambulance.png",
+      });
+
+      simulateMovement(startPos);
+    }
+
+    function simulateMovement(position) {
+      let lat = position.lat;
+      let lng = position.lng;
+
+      let interval = setInterval(() => {
+        lat += 0.0005;
+        lng += 0.0003;
+
+        const newPos = { lat, lng };
+        ambulanceMarker.setPosition(newPos);
+        map.panTo(newPos);
+      }, 15000); // Update every 15 sec (simulate movement)
+    }
+  </script>
+
+  <!-- Timer & Step Progress -->
+  <script>
+    const timerDisplay = document.getElementById("timer");
+    const steps = [
+      document.getElementById("step1"),
+      document.getElementById("step2"),
+      document.getElementById("step3"),
+      document.getElementById("step4"),
+    ];
+
+    let totalSeconds = 8 * 60;
+    let stepInterval = totalSeconds / 4;
+
+    const countdown = setInterval(() => {
+      totalSeconds--;
+
+      let minutes = Math.floor(totalSeconds / 60);
+      let seconds = totalSeconds % 60;
+      timerDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+      let currentStep = Math.floor((8 * 60 - totalSeconds) / stepInterval);
+
+      steps.forEach((step, i) => {
+        step.classList.remove("active", "completed");
+        if (i < currentStep) step.classList.add("completed");
+        else if (i === currentStep) step.classList.add("active");
+      });
+
+      if (totalSeconds <= 0) {
+        clearInterval(countdown);
+      }
+    }, 1000);
+  </script>
+
+  <!-- Load Google Maps -->
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&callback=initMap">
+  </script>
+
+</body>
+</html>
